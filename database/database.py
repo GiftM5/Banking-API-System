@@ -10,7 +10,7 @@ load_dotenv()
 database_url = os.getenv("DATABASE_URL")
 
 # Creating the SQLAlchemy engine
-engine = create_engine(
+Engine = create_engine(
     database_url, connect_args={"check_same_thread": False}  # Required for SQLite
 )
 
