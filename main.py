@@ -1,10 +1,9 @@
-# main.py
 from fastapi import FastAPI
-from .database import Engine, Base
-from .database.models.data import Account
-from .database.models.transaction import Transaction
+from .database.data import engine, Base
+from .database.models.table import Account
+
 
 # Create tables
-Base.metadata.create_all(bind=Engine)
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
