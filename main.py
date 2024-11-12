@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from .database.data import engine, Base
-from .database.models.table import Account
+from database.data import engine, Base
+from database.models.table import Account,Transaction
 
 
 # Create tables
