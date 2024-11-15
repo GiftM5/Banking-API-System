@@ -3,7 +3,7 @@ from database.data import engine, Base,SessionLocal
 from database.models.table import Account,Transaction
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-
+import uuid
 #pydantic models
 class create_account_base(BaseModel):
     email: str
@@ -29,9 +29,9 @@ async def create_account(account:create_account_base, db:Session=Depends(get_db)
     email_match=db.query(Account).filter(Account.email==account.email).first()
     if email_match:
         print(email_match)
-        return {'message':'this email already exist','email':email_match}
+        return {'message':'Account with this email already exist','email':email_match}
     else:
-        new_acc=Account(email=account.email,name=account.name)
+        new_acc=Account(email=account.email,name=account.name,account_number=int(uuid.uuid4().int % 1e10))
         db.add(new_acc)
         db.commit()
         db.refresh
@@ -42,6 +42,6 @@ async def create_account(account:create_account_base, db:Session=Depends(get_db)
 async def fetch_acccount(account_id:int=Path(description="Account ID"), db:Session=Depends(get_db)):
     _account=db.query(Account).filter(Account.id==account_id).first()
     if _account:
-        return {'account_id': _account.id, 'email': _account.email, 'name': _account.name, 'balance': _account.balance}
+        return {'account Number': _account.account_number, 'email': _account.email, 'name': _account.name, 'balance': _account.balance}
     else:
         return {'mssage':'Account not found'}
