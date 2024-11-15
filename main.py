@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends,Path
 from database.data import engine, Base,SessionLocal
 from database.models.table import Account,Transaction
 from pydantic import BaseModel
@@ -38,8 +38,8 @@ async def create_account(account:create_account_base, db:Session=Depends(get_db)
         return{"message": 'account created','email':account.email}
     
 #endpoint for retriving acc
-@app.get('/account/<account_id>')
-async def fetch_acccount(account_id:int, db:Session=Depends(get_db)):
+@app.get('/account/{account_id}')
+async def fetch_acccount(account_id:int=Path(description="Account ID"), db:Session=Depends(get_db)):
     _account=db.query(Account).filter(Account.id==account_id).first()
     if _account:
         return {'account_id': _account.id, 'email': _account.email, 'name': _account.name, 'balance': _account.balance}
