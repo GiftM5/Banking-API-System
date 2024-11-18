@@ -1,14 +1,18 @@
-from fastapi import FastAPI, Depends,Path
+from fastapi import FastAPI, Depends,Path,HTTPException
 from database.data import engine, Base,SessionLocal
 from database.models.table import Account,Transaction
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr,Field 
 from sqlalchemy.orm import Session
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
-#pydantic models
+#pydantic models for creating account
 class create_account_base(BaseModel):
-    email: str
+    email: EmailStr
     name:str
     surname:str
+    balance: float= Field(gt=0,description="Balance must be positive")
+#pydantic model for retrieving data
+
     
 #create tables  
 Base.metadata.create_all(bind=engine)
@@ -26,25 +30,37 @@ def get_db():
    
 #endpoint for creating account
 @app.post('/account/create/')
-async def create_account(account:create_account_base, db:Session=Depends(get_db)):
+async def create_account(account:create_account_base, db:Session=Depends(get_db), response_model=create_account_base):
     email_match=db.query(Account).filter(Account.email==account.email).first()
     if email_match:
-        return {'message':'Account with this email already exist'}
+        return {
+            'message':'Account with this email already exist'
+            }
     else:
         new_acc=Account(email=account.email,name=account.name,surname=account.surname)
         db.add(new_acc)
         db.commit()
         db.refresh
-        return{"message": 'account created','email':account.email}
+        return{
+            "message": 'account created','email':account.email
+            }
+        
+#authentication route......
     
 #endpoint for retriving spacific user data with id parameter
 @app.get('/account/{account_id}')
-async def fetch_acccount(account_id:int=Path(description="Account ID"), db:Session=Depends(get_db)):
+async def fetch_acccount(account_id:int=Path(description="Account ID"), db:Session=Depends(get_db),response_model=create_account_base):
     _account=db.query(Account).filter(Account.id==account_id).first()
     if _account:
-        return {'account Number': _account.account_number, 'email': _account.email, 'name': _account.name,'surname':_account.surname, 'balance': _account.balance,'account created':_account.creation_date}
+        return {
+            'account Number': _account.account_number, 
+            'email': _account.email, 
+            'name': _account.name,
+            'surname':_account.surname, 
+            'balance': _account.balance,
+            'account created':_account.creation_date}
     else:
-        return {'mssage':'Account not found'}
+        raise HTTPException(status_code=404, detail="Account not found")
     
 #endpoint for updating information
 
