@@ -63,9 +63,44 @@ async def fetch_acccount(account_id:int=Path(description="Account ID"), db:Sessi
         raise HTTPException(status_code=404, detail="Account not found")
     
 #endpoint for updating information
+@app.put('/account/{account_id}')
+async def update_account(account_id:int = Path(description= "Updating Account ID"),account:create_account_base = Depends(),db: Session = Depends(get_db)):
+    existing_account = db.query(Account).filter(Account.id == account_id).first()
+
+    if not existing_account:
+        raise HTTPException(status_code=404, detail="Account not found")
+    
+    existing_account.email  = account.email
+    existing_account.name = account.name
+    existing_account.surname = account.surname
+    existing_account.balance = account.balance
+
+    db.commit()
+    db.refresh(existing_account)
+
+    return {
+            'account Number': existing_account.id, 
+            'email': existing_account.email, 
+            'name':existing_account.name,
+            'surname':existing_account.surname, 
+            'balance': existing_account.balance,}
+
+        
 
 
-#endpoint for deleting an account 
+#endpoint for deleting an account
+@app.delete('/account/{account_id}')
+async def update_account(account_id:int = Path(description= "Updating Account ID"),account:create_account_base = Depends(),db: Session = Depends(get_db)):
+    existing_account = db.query(Account).filter(Account.id == account_id).first()
+
+    if not existing_account:
+        raise HTTPException(status_code=404, detail="Account not found")
+    
+    db.delete(existing_account)
+    db.commit()
+
+    return(f"Account_id{account_id} has been deleted successfully")
+
 
 
 #endpoint for adding funds to account
