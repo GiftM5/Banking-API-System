@@ -5,14 +5,86 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Account Details</title>
     <link rel="stylesheet" href="/static/css/detail.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
-    <h1>Account Details</h1>
-    <p><strong>Account Number:</strong> {{ account['account Number'] }}</p>
-    <p><strong>Email:</strong> {{ account['email'] }}</p>
-    <p><strong>Name:</strong> {{ account['name'] }} {{ account['surname'] }}</p>
-    <p><strong>Balance:</strong> ${{ account['balance'] }}</p>
-    <p><strong>Account Created:</strong> {{ account['account created'] }}</p>
-    <a href="/">Back to Login</a>
+    <div class="main--content">
+        <div class="header--wrapper">
+            <div class="header--title">
+                <h2>Account Details</h2>
+                <span><strong>ID: {{ account['id'] }}</strong></span>
+            </div>
+            <div class="user--info">
+                <h2>Name: {{ account['name'] }} {{ account['surname'] }}</h2>
+            </div>
+        </div>
+        <div class="card--container">
+            <div class="card--wrapper">
+                <div class="email--card">
+                    <div class="card--header">
+                        <div class="email">
+                            <span class="title">
+                                <strong>Email:</strong>
+                            </span>
+                            <span class="email--value">
+                                <strong>{{ account['email'] }}</strong>
+                            </span>
+                        </div>
+                        <i class='bx bxs-envelope icon' ></i>
+                    </div>
+                </div>
+                <div class="email--card">
+                    <div class="card--header">
+                        <div class="email">
+                            <span class="title">
+                                <strong>Account Number:</strong>
+                            </span>
+                            <span class="email--value">
+                                <strong>{{ account['account_number'] }}</strong>
+                            </span>
+                        </div>
+                        <i class='bx bxs-credit-card-alt icon' ></i>
+                    </div>
+                </div>
+                <div class="email--card">
+                    <div class="card--header">
+                        <div class="email">
+                            <span class="title">
+                                <strong>Balance:</strong>
+                            </span>
+                            <span class="email--value">
+                                <strong>R{{ account['balance'] }}</strong>
+                            </span>
+                        </div>
+                        <i class='bx bxs-wallet icon' ></i>
+                    </div>
+                </div>
+                <div class="email--card">
+                    <div class="card--header">
+                        <div class="email">
+                            <span class="title">
+                                <strong>Account Created:</strong>
+                            </span>
+                            <span class="email--value">
+                                <strong>{{ account['creation_date'] }}</strong>
+                            </span>
+                        </div>
+                        <i class='bx bxs-calendar icon' ></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="button--container">
+            <div class="button--wrapper">
+                <div class="row">
+                    <button class="btn"><a href="/" class="link">Log Out</a></button>
+                    <button class="btn"><a href="/update" class="link">Update Account</a></button>
+                    <button class="btn"><a href="/deleted" class="link">Delete Account</a></button>
+                    <button class="btn"><a href="/deposit" class="link">Deposit</a></button>
+                    <button class="btn"><a href="/signup" class="link">Withdraw</a></button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

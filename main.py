@@ -1,9 +1,9 @@
-from fastapi import FastAPI, Depends,Path,HTTPException
+from fastapi import FastAPI, Depends,Path,HTTPException, Form
 from database.data import engine, Base,SessionLocal
 from database.models.table import Account,Transaction
 from pydantic import BaseModel, EmailStr,Field 
 from sqlalchemy.orm import Session
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse,RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.requests import Request
@@ -37,6 +37,14 @@ def get_db():
         yield db
     finally:
         db.close()
+        
+# connect the html and css
+
+#  Mount static files (CSS, JS, etc.)
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Set up templates
+templates = Jinja2Templates(directory="templates")
    
 #endpoint for creating account
 @app.post('/account/create/')
@@ -63,12 +71,12 @@ async def fetch_account(account_id:int=Path(description="Account ID"), db:Sessio
     _account=db.query(Account).filter(Account.id==account_id).first()
     if _account:
         return {
-            'account Number': _account.account_number, 
+            'account_Number': _account.account_number, 
             'email': _account.email, 
             'name': _account.name,
             'surname':_account.surname, 
             'balance': _account.balance,
-            'account created':_account.creation_date}
+            'account_created':_account.creation_date}
     else:
         raise HTTPException(status_code=404, detail="Account not found")
     
@@ -150,13 +158,6 @@ async def withdraw_funds(account_id: int = Path(description="Account ID to withd
         "new_balance": account.balance
     }
     
-# connect the html and css
-
-#  Mount static files (CSS, JS, etc.)
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
-# Set up templates
-templates = Jinja2Templates(directory="templates")
 
 # Endpoints and Routes
 
@@ -165,13 +166,28 @@ templates = Jinja2Templates(directory="templates")
 async def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
+# Endpoint for handling the form submission
+@app.post("/login", response_class=HTMLResponse)
+async def login(request: Request, name: str = Form(...), surname: str = Form(...), email: str = Form(...), db: Session = Depends(get_db)):
+    # Check if account exists in the database with the provided name, surname, and email
+    user = db.query(Account).filter(Account.name == name, Account.surname == surname, Account.email == email).first()
+    
+    # If account is not found, raise an HTTP exception
+    if not user:
+        raise HTTPException(status_code=404, detail="Account not found")
+    
+    # Redirect to the detail page with the user's account ID
+    return RedirectResponse(url=f"/detail/{user.id}", status_code=303)
+
 # route for detail page.
-@app.get("/details/{account_id}", response_class=HTMLResponse)
+@app.get("/detail/{account_id}", response_class=HTMLResponse)
 async def details_page(request: Request, account_id: int, db: Session = Depends(get_db)):
-    # account_data is to fecth data from database
-    account_data = await fetch_account(account_id=account_id, db=db)
-    # return the details.html
-    return templates.TemplateResponse("details.html", {"request": request, "account": account_data})
+    user = db.query(Account).filter(Account.id == account_id).first()
+    
+    if not user:
+        raise HTTPException(status_code=404, detail="Account not found")
+    
+    return templates.TemplateResponse("details.html", {"request": request, "account": user})
 
 # route for creating account page.
 

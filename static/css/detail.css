@@ -1,0 +1,116 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+.main--content{
+    position: relative;
+    background: #ebe9e9;
+    width: 100%;
+    padding: 1rem;
+    margin-top: 5%;
+}
+.main--content .header--wrapper{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    background: #fff;
+    border-radius: 10px;
+    padding: 10px 2rem;
+    margin-bottom: 1rem;
+}
+.header--title{
+    color: black;
+}
+.user--info{
+    display: flex;
+    align-items: center;
+    gap: 1;
+}
+
+.card--container{
+    background: #fff;
+    padding: 2rem;
+    border-radius: 10px;
+    margin-top: 5%;
+}
+.card--wrapper{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1;
+    justify-content: space-around;
+}
+
+.email--card{
+    background: #808080;
+    border-radius: 10px;
+    padding: 1.2rem;
+    width: 290px;
+    height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    transition: all 0.5s ease-in-out;
+}
+.email--card:hover{
+    transform: translateY(-5px);
+}
+.card--header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.email{
+    display: flex;
+    flex-direction: column;
+    margin-right: 10px;
+}
+.title{
+    font-size: 26px;
+    font-weight: 200;
+}
+.email--value{
+    font-size: 20px;
+    font-weight: 200;
+}
+.icon{
+    color: black;
+    padding: 1rem;
+    height: 60px;
+    width: 60px;
+    text-align: center;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    background: rgba(255, 255, 255, .7);
+}
+
+.button--container{
+    background: #fff;
+    padding: 2rem;
+    border-radius: 10px;
+    margin-top: 5%;
+}
+.button--wrapper{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1;
+    justify-content: space-around;
+}
+.btn{
+    width: 100%;
+    height: 45px;
+    background: #fff;
+    border: 2px solid black;
+    margin-bottom: 10px;
+    outline: none;
+    border-radius: 40px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+    cursor: pointer;
+    font-size: 16px;
+    color: black;
+    font-weight: 600;
+}
