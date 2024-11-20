@@ -13,6 +13,12 @@ class create_account_base(BaseModel):
     balance: float= Field(gt=0,description="Balance must be positive")
 #pydantic model for retrieving data
 
+#pydantic model for transactions
+class transaction_actions(BaseModel):
+    email: EmailStr
+    name:str
+    surname: str
+    amount: float= Field(gt=0,description="Amount must be positive")
     
 #create tables  
 Base.metadata.create_all(bind=engine)
@@ -105,38 +111,39 @@ async def update_account(account_id:int = Path(description= "Delete Account ID")
 
 #endpoint for adding funds to account
 @app.post('/account/{account_id}/deposit/')
-async def deposit(account_id:int = Path(description= "Account ID to deposit funds"), account:create_account_base = Depends(),db: Session = Depends(get_db)):
+async def deposit(account_id:int = Path(description= "Account ID to deposit funds"), account_data : transaction_actions = Depends(),db: Session = Depends(get_db)):
     account = db.query(Account).filter(Account.id == account_id).first()
+    
     if not account:
         raise HTTPException(status_code=404, detail="Account not found")
-    amount = input()
-    account.balance += amount
+    
+    account.balance += account_data.amount
     
     db.commit()
     db.refresh(account)
 
     return {
-        "message": f"Successfully deposited {amount} to account {account_id}.",
+        "message": f"Successfully deposited {account_data.amount} to account {account_id}.",
         "new_balance": account.balance
     }
 
 #endpoint for withdrawing fund from account
 @app.post('/account/{account_id}/withdraw')
-async def withdraw_funds(account_id: int = Path(description="Account ID to withdraw funs"), account:create_account_base = Depends(),db: Session = Depends(get_db)):
+async def withdraw_funds(account_id: int = Path(description="Account ID to withdraw funs"), account_data: transaction_actions = Depends(),db: Session = Depends(get_db)):
     account = db.query(Account).filter(Account.id == account_id).first()
-    amount = input()
+    
     if not account:
         raise HTTPException(status_code=404, detail="Account not found")
 
-    if account.balance < amount:
+    if account.balance < account_data.amount:
         raise HTTPException(status_code=404, detail="Insufficient funds")
 
-    account.balance -= amount
+    account.balance -= account_data.amount
     
     db.commit()
     db.refresh(account)
 
     return {
-        "message": f"Successfully withdraw {amount} from account {account_id}.",
+        "message": f"Successfully withdraw {account_data.amount} from account {account_id}.",
         "new_balance": account.balance
     }
