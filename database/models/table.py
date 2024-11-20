@@ -34,3 +34,9 @@ class Transaction(Base):
     type = Column(Enum('deposit', 'withdrawal', name='transaction_type'), nullable=False)
 
     account = relationship("Account", back_populates="transactions")
+    
+    
+def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        if self.balance <= 0:
+            raise ValueError("Balance must be greater than 0")

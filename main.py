@@ -3,6 +3,10 @@ from database.data import engine, Base,SessionLocal
 from database.models.table import Account,Transaction
 from pydantic import BaseModel, EmailStr,Field 
 from sqlalchemy.orm import Session
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from fastapi.requests import Request
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 #pydantic models for creating account
@@ -10,7 +14,7 @@ class create_account_base(BaseModel):
     email: EmailStr
     name:str
     surname:str
-    balance: float= Field(gt=0,description="Balance must be positive")
+    
 #pydantic model for retrieving data
 
 #pydantic model for transactions
@@ -55,7 +59,7 @@ async def create_account(account:create_account_base, db:Session=Depends(get_db)
     
 #endpoint for retriving spacific user data with id parameter
 @app.get('/account/{account_id}')
-async def fetch_acccount(account_id:int=Path(description="Account ID"), db:Session=Depends(get_db),response_model=create_account_base):
+async def fetch_account(account_id:int=Path(description="Account ID"), db:Session=Depends(get_db),response_model=create_account_base):
     _account=db.query(Account).filter(Account.id==account_id).first()
     if _account:
         return {
@@ -79,7 +83,6 @@ async def update_account(account_id:int = Path(description= "Updating Account ID
     existing_account.email  = account.email
     existing_account.name = account.name
     existing_account.surname = account.surname
-    existing_account.balance = account.balance
 
     db.commit()
     db.refresh(existing_account)
@@ -88,8 +91,7 @@ async def update_account(account_id:int = Path(description= "Updating Account ID
             'account Number': existing_account.id, 
             'email': existing_account.email, 
             'name':existing_account.name,
-            'surname':existing_account.surname, 
-            'balance': existing_account.balance,}
+            'surname':existing_account.surname}
 
         
 
@@ -147,3 +149,37 @@ async def withdraw_funds(account_id: int = Path(description="Account ID to withd
         "message": f"Successfully withdraw {account_data.amount} from account {account_id}.",
         "new_balance": account.balance
     }
+    
+# connect the html and css
+
+#  Mount static files (CSS, JS, etc.)
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Set up templates
+templates = Jinja2Templates(directory="templates")
+
+# Endpoints and Routes
+
+# route for home page.
+@app.get("/", response_class=HTMLResponse)
+async def home(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+# route for detail page.
+@app.get("/details/{account_id}", response_class=HTMLResponse)
+async def details_page(request: Request, account_id: int, db: Session = Depends(get_db)):
+    # account_data is to fecth data from database
+    account_data = await fetch_account(account_id=account_id, db=db)
+    # return the details.html
+    return templates.TemplateResponse("details.html", {"request": request, "account": account_data})
+
+# route for creating account page.
+
+# route for updating account page.
+
+# route for deleting account page.
+
+# route for deposit page.
+
+# route for withdraw page.
+

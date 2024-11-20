@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Details</title>
+</head>
+<body>
+    <h1>Account Details</h1>
+    <p><strong>Account Number:</strong> {{ account['account Number'] }}</p>
+    <p><strong>Email:</strong> {{ account['email'] }}</p>
+    <p><strong>Name:</strong> {{ account['name'] }} {{ account['surname'] }}</p>
+    <p><strong>Balance:</strong> ${{ account['balance'] }}</p>
+    <p><strong>Account Created:</strong> {{ account['account created'] }}</p>
+    <a href="/">Back to Login</a>
+</body>
+</html>
