@@ -4,25 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="/static/index.css">
+    <link rel="stylesheet" href="/static/css/index.css">
 </head>
 <body>
-    <h1>Login</h1>
+    <div class="wrapper">
+        <form action="/details/{account_id}" method="post">
+            <h1>Login</h1>
+            <div class="input-box">
+                <input type="text" id="name" name="name" required placeholder="Name">
+            </div>
+            
+            <div class="input-box">
+                <input type="text" id="name" name="surname" required placeholder="Surame">
+            </div>
 
-    <form action="/details/{account_id}" method="post">
+            
+            <div class="input-box">
+                <input type="email" id="email" name="email" required placeholder="example@example.com">
+            </div>
+            <button type="submit" class="btn">Login</button>
+        </form>
+        <button class="btn"><a href="/signup">Create an Account</a></button>
+    </div>
 
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required placeholder="example@example.com">
-        
-        <button type="submit">Login</button>
-    </form>
-
-    <button><a href="/signup">Create an Account</a></button>
 </body>
 </html>
