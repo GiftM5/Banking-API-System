@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from database.data import get_db
 from database.models.table import Account,Transaction
 
-transactions_router = APIRouter(prefix="/account", tags=["Transactions"])
+transactions_router = APIRouter(tags=["Transactions"])
 
 #pydantic model for transactions
 class transaction_actions(BaseModel):
