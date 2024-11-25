@@ -68,7 +68,7 @@ async def update_account(account_id:int = Path(description= "Updating Account ID
 
 #endpoint for deleting an account
 @account_router.delete('/account/{account_id}')
-async def update_account(account_id:int = Path(description= "Delete Account ID"),account:create_account_base = Depends(),db: Session = Depends(get_db)):
+async def delete_account(account_id:int = Path(description= "Delete Account ID"),account:create_account_base = Depends(),db: Session = Depends(get_db)):
     existing_account = db.query(Account).filter(Account.id == account_id).first()
 
     if not existing_account:
